@@ -7,9 +7,11 @@ const BookCreate = () => {
   const router = useRouter();
   const [bookTitle, setBookTitle] = useState("");
   const [errors, setErrors] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setSubmitting(true);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/books`,
       {
@@ -33,6 +35,7 @@ const BookCreate = () => {
     } else {
       const data = await res.json();
       setErrors(data.errors);
+      setSubmitting(false);
     }
   }
 
@@ -49,9 +52,12 @@ const BookCreate = () => {
         <input
           onChange={(e) => setBookTitle(e.target.value)}
           value={bookTitle}
+          disabled={submitting}
           type="text"
         />
-        <button>Enviar</button>
+        <button disabled={submitting}>
+          {submitting ? "Enviando..." : "Enviar"}
+        </button>
         {errors.title && (
           <span style={{ color: "red", display: "block" }}>{errors.title}</span>
         )}
